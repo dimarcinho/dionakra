@@ -134,7 +134,7 @@ public class Raquete implements Runnable {
                 s.pup3.play();
                 break;
             case 4:
-                pontos.addPoints(-10);
+                pontos.addPoints(10);
                 Dionakra.bola.ganhaVidas();
                 s.pup4.play();
                 break;
