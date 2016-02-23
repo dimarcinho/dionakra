@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class Bola implements Runnable {
         
@@ -21,8 +22,12 @@ public class Bola implements Runnable {
     private LinkedList<Power> lpc = pc.getPowerBounds();
     
     Rectangle bola;
+    private int speed = 5;
+    private int countBloco = 0;
+    
     
     boolean init = false;
+    boolean paused = false;
     boolean glue = false;
     
     Level lvl = new Level();
@@ -50,6 +55,10 @@ public class Bola implements Runnable {
     public boolean isInit() {
         return init;
     }
+        
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }   
     
     public Rectangle getBounds(){
         return bola;
@@ -87,12 +96,22 @@ public class Bola implements Runnable {
         int vx, vy, vrx;
         vrx = rqt.getXdir()/5;
         vx = 2*this.xdir - vrx;
-        if(vx > 2)
-            vx = 2;
-        if(vx < -2)
-            vx = -2;
         
-        vy = -1*this.ydir;        
+        //a direção da raquete influencia na saída do vetor x
+        if(vrx == 0){
+            vx = this.xdir;
+        } else {
+            if(vx*vrx > 0){
+                vx = this.xdir - 2;
+            } else{
+                vx = this.xdir + 2;
+            }    
+        }
+
+        //randomiza uma velocidade para o y
+        Random rnd = new Random();
+        int rnum = rnd.nextInt(2)+ 1;        
+        vy = -rnum*this.ydir;        
         
         if(rec.intersects(rqt.r)){
             s.collision.play();
@@ -152,6 +171,13 @@ public class Bola implements Runnable {
                     Dionakra.getFundo().setNextTipo();
                 }
                 
+                //rotina para ir aumentando a velocidade da bola
+                countBloco++;
+                if(countBloco > 10){
+                    this.updateSpeed();
+                    countBloco = 0;
+                }
+                
             }
         }
     }
@@ -192,12 +218,19 @@ public class Bola implements Runnable {
     public void restartBola(){
         setXdir(0);
         setYdir(0);
+        speed = 6;
         bola.x = Dionakra.r.getX() + Dionakra.r.r.width/2 - 4;
         bola.y = Dionakra.r.getY() - bola.height;
         setInit(false);
         sc.setF(1);
         this.setGlue(false);
         s.restartbola.play();
+    }
+    
+    public void updateSpeed(){
+        this.speed++;
+        if(this.speed > 3)
+            this.speed = 3;
     }
 
     public int getVidas() {
@@ -244,7 +277,7 @@ public class Bola implements Runnable {
                 for(int i = 0; i < lpc.size(); i++){
                     lpc.get(i).move();
                 }
-                Thread.sleep(4);  //4         
+                Thread.sleep(speed);  //mínimo de 3;
             }                
         }
         catch(Exception e){System.out.println("System error: "+e);}
