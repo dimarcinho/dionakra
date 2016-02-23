@@ -54,8 +54,8 @@ public class PowerControlador {
     
     public void randomGenerate(Bloco bloco){
         Random rnd = new Random();
-        int rndTipo = rnd.nextInt(19)+ 1; //probabilidade de 4 em NextInt(x)+1
-        if(rndTipo <= 4){
+        int rndTipo = rnd.nextInt(34)+ 1; //probabilidade de 4 em NextInt(x)+1
+        if(rndTipo <= 7){
             Power power = new Power(bloco);
             power.setTipo(rndTipo);
             this.addPower(power);
