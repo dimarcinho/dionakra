@@ -12,13 +12,16 @@ public class Raquete implements Runnable {
     
     public int x,y,xdir,ydir;
     Image img;
+    Image leftRqt, rightRqt, meioRqt;
+    
+    boolean paused = false;
+    private int centerSize = 3;
     
     private LinkedList<Power> pc = PowerControlador.getPowerBounds();
     
     Rectangle r;
     
-    Score pontos = new Score();
-    
+    Score pontos = new Score();    
     Sound s = new Sound();    
         
     public Raquete(){
@@ -32,7 +35,8 @@ public class Raquete implements Runnable {
     public void reset(){
         x = 315;
         y = 500;
-        r = new Rectangle(this.x, this.y, 75, 15);        
+        r = new Rectangle(this.x, this.y, 75, 15);
+        centerSize = 3;
     }
     
     public Rectangle getBounds(){
@@ -40,35 +44,23 @@ public class Raquete implements Runnable {
     }
     
     public void draw(Graphics g){
-        g.setColor(Color.red);
-        //g.fillRect(r.x, r.y, r.width, r.height);
-        img = ResourceLoader.getImage("raquete.png");
-        g.drawImage(img, r.x, r.y, null); 
-        
-        //desenha(g);
-        
-    }
-    
-    public void desenha(Graphics g){
-        int x1, x2, x3, x4;        
-        Image leftRqt, rightRqt, meioRqt;
+
         leftRqt = ResourceLoader.getImage("raquete_esquerda.png");
         rightRqt = ResourceLoader.getImage("raquete_direita.png");
         meioRqt = ResourceLoader.getImage("raquete_meio.png");
-        int xBasis = 100;
-        x1 = xBasis + leftRqt.getWidth(null);
-        x2 = x1 + 5;
-        x3 = x2 + meioRqt.getWidth(null);
-        x4 = x3 + meioRqt.getWidth(null);
         
-        g.drawImage(leftRqt, xBasis, 500, null);
-        g.drawImage(meioRqt, xBasis+leftRqt.getWidth(null), 500, null);        
-        g.drawImage(meioRqt, xBasis+leftRqt.getWidth(null)+meioRqt.getWidth(null), 500, null);
-        g.drawImage(meioRqt, xBasis+leftRqt.getWidth(null)+2*meioRqt.getWidth(null), 500, null);
-        g.drawImage(rightRqt, xBasis+leftRqt.getWidth(null)+3*meioRqt.getWidth(null), 500, null);
+        int xref = this.getX();
         
-        
-        
+        g.drawImage(leftRqt, xref, this.r.y, null);
+        xref = xref + leftRqt.getWidth(null);        
+        for(int i = 1; i <= centerSize; i++){
+            g.drawImage(meioRqt, xref, this.r.y, null);
+            xref = xref + meioRqt.getWidth(null);            
+        }        
+        g.drawImage(rightRqt, xref, this.r.y, null);
+        xref += rightRqt.getWidth(null);
+        xref -= this.getX();
+        r.setBounds(r.x, r.y, xref, r.height); //atualiza a raquete para o tamanho correto
     }
     
     public void setXdir(int d){
@@ -86,6 +78,29 @@ public class Raquete implements Runnable {
     public int getY(){
         return r.y;
     }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public void setCenterSize(int centerSize) {
+        this.centerSize = centerSize;
+    }    
+    
+    
+    public void updateCenterSize(int k){
+        centerSize += k;
+        if(centerSize == 0){
+            Dionakra.bola.perdeVidas();
+            Dionakra.bola.restartBola();            
+        }
+        if(centerSize > 5){
+            centerSize = 5;
+        }
+        Dionakra.bola.setGlue(false);
+        Dionakra.bola.setSlowBall(false);
+    }
+    
     
     public void move(){
         
@@ -119,24 +134,43 @@ public class Raquete implements Runnable {
         switch(tipo){
             default:
                 System.out.println("Tipo de power inválido no switch do bonusPower()!");
-            case 1:
+            case 1: //tira uma vida
                 Dionakra.bola.perdeVidas();                
                 s.pup1.play();
                 break;
-            case 2:
+            case 2: //aumenta o fator de multiplicação de pontos
                 pontos.addPoints(10);
                 pontos.addF();                
                 s.pup2.play();
                 break;
-            case 3:
-                pontos.addPoints(10);
+            case 3: //introduz a "cola" na raquete                
                 Dionakra.bola.setGlue(true);
+                Dionakra.bola.setSlowBall(false);
+                this.setCenterSize(3);
+                pontos.addPoints(10);
                 s.pup3.play();
                 break;
-            case 4:
-                pontos.addPoints(10);
+            case 4: //aumenta uma vida
                 Dionakra.bola.ganhaVidas();
+                pontos.addPoints(10);
                 s.pup4.play();
+                break;
+            case 5: //aumenta a raquete                           
+                updateCenterSize(+1);                
+                pontos.addPoints(10);
+                s.pup5.play();
+                break;
+            case 6: //diminui a raquete/tira uma vida
+                updateCenterSize(-1);                
+                s.pup6.play();
+                break;
+            case 7: //deixa a bola lenta
+                Dionakra.bola.setSpeed(7);
+                Dionakra.bola.setSlowBall(true);
+                this.setCenterSize(3);
+                Dionakra.bola.setGlue(false);
+                pontos.addPoints(10);
+                s.pup7.play();
                 break;
         }
     }
@@ -181,7 +215,7 @@ public class Raquete implements Runnable {
                 Thread.sleep(15);           
             }                
         }
-        catch(Exception e){System.out.println("System error: "+e);}
+        catch(Exception e){System.out.println("Erro na Raquete: "+e);}
     }
     
 }
