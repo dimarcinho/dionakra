@@ -28,14 +28,14 @@ public class Raquete implements Runnable {
     
         x = 315;
         y = 500;
-        r = new Rectangle(this.x, this.y, 75, 15);        
+        r = new Rectangle(this.x, this.y, 85, 15);        
                 
     }
     
     public void reset(){
         x = 315;
         y = 500;
-        r = new Rectangle(this.x, this.y, 75, 15);
+        r = new Rectangle(this.x, this.y, 85, 15);
         centerSize = 3;
     }
     
