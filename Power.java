@@ -21,12 +21,17 @@ public class Power extends Thread {
         this.y = bloco.y;
         r.setBounds(this.x, this.y, 32, 32);
         
-        setYdir(+1);
-        
+        this.setYdir(+1);
+        //System.out.println("Power criado!");
+        this.start();
+        //System.out.println("Power start!");
+        //this.run();
     }
+    
+    public void init(){}
         
     public Rectangle getBounds(){
-        return r;
+        return this.r;
     }
     
     public void draw(Graphics g){        
@@ -34,11 +39,11 @@ public class Power extends Thread {
         g.drawImage(img, r.x, r.y, 32, 32, null);
     }
 
-    public int getTipo() {
+    public int getTipo(){
         return tipo;
     }
 
-    public void setTipo(int tipo) {
+    public void setTipo(int tipo){
         this.tipo = tipo;
     }
     
@@ -48,7 +53,7 @@ public class Power extends Thread {
         return rndTipo;
     }
     
-    public void setYdir(int ydir) {
+    private void setYdir(int ydir){
         this.ydir = ydir;
     }
     
@@ -63,9 +68,10 @@ public class Power extends Thread {
         }
     }
 
+    @Override
     public void run(){
-        try{
-        }catch(Exception e){System.out.println("System error: "+e);}
+        try{}
+        catch(Exception e){System.out.println("Erro no Power: "+e);}
     }
     
 }

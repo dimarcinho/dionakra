@@ -4,6 +4,7 @@ package dionakra;
 public class Score {
 
     public static int pts;
+    public static int max;
     public static int f;
     
     public Score(){
@@ -22,6 +23,9 @@ public class Score {
     
     public void addPoints(int x){
         this.pts = this.pts + x*this.f;
+        
+        if(max < pts)
+            max = pts;
     }
     
     public void reset(){

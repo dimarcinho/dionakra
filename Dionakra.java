@@ -25,17 +25,22 @@ public class Dionakra extends JFrame {
     public static boolean startGame = true;
     public static boolean gameOver = false;
     public static boolean endGame = false;
+    public static boolean paused = false;
         
     public static Fundo fundo = new Fundo(WIDTH, HEIGHT);
 
     static Raquete r = new Raquete();
     static Bola bola = new Bola(r.x+37,r.y-8);
-    
+        
     public BlocoControlador bc = new BlocoControlador();
     public PowerControlador pc = new PowerControlador();
     
     public Level level = new Level();
     public Score score = new Score();
+    
+    static Thread t = new Thread(bola);
+    static Thread t2 = new Thread(r); 
+    //static Thread t3 = new Thread(pc); 
 
     public Dionakra(){
     
@@ -45,7 +50,7 @@ public class Dionakra extends JFrame {
         addKeyListener(new AL());
         addMouseMotionListener(new MouseHandler());
         addMouseListener(new MouseHandler());
-        setTitle("Dionakra v0.1");
+        setTitle("Dionakra v1.0");
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setVisible(true);
@@ -111,7 +116,9 @@ public class Dionakra extends JFrame {
         g.setColor(Color.yellow);
         g.drawString("Level: "+level.getLevel(), 18, 55);        
         g.drawString("Pontos: ", 105, 55);
-        g.drawString(""+Score.pts, 175, 55);        
+        g.drawString(""+Score.pts, 175, 55);
+        g.drawString("Recorde: ", 245, 55);
+        g.drawString(""+Score.max, 335, 55);
         g.drawString("Vidas: ", 405, 55);
         
     }
@@ -134,8 +141,10 @@ public class Dionakra extends JFrame {
                 fundo.setTipo(1);
             }
             
-            if(e.getKeyCode() == e.VK_W){
-                //level.setLevel(6);
+            if(e.getKeyCode() == e.VK_P){
+                if(!paused){
+                    
+                }
             }
         }
             
@@ -184,9 +193,9 @@ public class Dionakra extends JFrame {
     
     public static void main(String[] args) {
         Dionakra game = new Dionakra();        
-        Thread t = new Thread(bola);
-        Thread t2 = new Thread(r);        
+       
         t.start();
         t2.start();
+        //t3.start();
     }
 }

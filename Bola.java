@@ -19,8 +19,8 @@ public class Bola implements Runnable {
     
     
     PowerControlador pc = new PowerControlador();
-    private LinkedList<Power> lpc = pc.getPowerBounds();
-    
+    //private LinkedList<Power> powers = pc.getPowers();
+
     Rectangle bola;
     private int speed = 5;
     private int countBloco = 0;
@@ -29,6 +29,7 @@ public class Bola implements Runnable {
     boolean init = false;
     boolean paused = false;
     boolean glue = false;
+    boolean slowBall = false;
     
     Level lvl = new Level();
     Score sc = new Score();
@@ -45,6 +46,7 @@ public class Bola implements Runnable {
         
         setYdir(0);
         setXdir(0);
+        
                 
     }
     
@@ -98,6 +100,20 @@ public class Bola implements Runnable {
         vx = 2*this.xdir - vrx;
         
         //a direção da raquete influencia na saída do vetor x
+        
+        /*
+         * ************************************
+         * ************************************ 
+         * ************************************
+         * CHECAR ESTA PARTE E CORRIGIR O VX!!!!
+         * * ***********************************
+         * * ***********************************
+         * * ***********************************
+         * * ***********************************
+         * 
+         */
+        
+        
         if(vrx == 0){
             vx = this.xdir;
         } else {
@@ -129,12 +145,13 @@ public class Bola implements Runnable {
     public void collisionBlocks(){
         int xb,yb; //x,y da bola
         int xm,ym; // x,y do bloco
-        int w,h; //width e height do bloco
+        int w,h; //width e height do bloco        
         
         for(int i = 0; i < c.size(); i++){
             if(getBounds().intersects(c.get(i).getBounds())){
                 s.collision.play();
                 sc.addPoints(1);
+                
                 pc.randomGenerate(c.get(i)); //gera ou não os powers
                 
                 xb = bola.x + (int)bola.width/2;
@@ -149,17 +166,21 @@ public class Bola implements Runnable {
                 
                 if(yb - ym == 16 || yb - ym == 15){
                     setYdir(+1);
+                    //ydir = -ydir;
                 }
                 
                 if(yb - ym == -15 || yb - ym == -16){
                     setYdir(-1);
+                    //ydir = -ydir;
                 }
                 
                 if(xb - xm == 28 || xb - xm == 25){
                     setXdir(+1);
+                    //xdir = -xdir;
                 }
                 if(xb - xm == -28 || xb - xm == -25){
                     setXdir(-1);
+                    //xdir = -xdir;
                 }
                 
                 c.remove(i); //remove o bloco do jogo e do controlador
@@ -199,13 +220,18 @@ public class Bola implements Runnable {
             bola.y += ydir;
 
             if(bola.x <= 50){
-                setXdir(+1);            
+                setXdir(+1);                
             }
             if(bola.x >= 730 - bola.width){
-                setXdir(-1);            
+                setXdir(-1);                
             }
             if(bola.y <= 80){
-                setYdir(+1);            
+                //setYdir(+1);
+                ydir = -ydir;
+                if(ydir > 2)
+                    ydir = 2;
+                else if(ydir < -2)
+                    ydir = -2;
             }
             if(bola.y >= 544){
                 this.perdeVidas();                
@@ -218,19 +244,30 @@ public class Bola implements Runnable {
     public void restartBola(){
         setXdir(0);
         setYdir(0);
-        speed = 6;
+        speed = 5;
         bola.x = Dionakra.r.getX() + Dionakra.r.r.width/2 - 4;
         bola.y = Dionakra.r.getY() - bola.height;
         setInit(false);
         sc.setF(1);
         this.setGlue(false);
         s.restartbola.play();
+        Dionakra.r.setCenterSize(3);
     }
     
     public void updateSpeed(){
-        this.speed++;
-        if(this.speed > 3)
-            this.speed = 3;
+        if(!slowBall){
+            this.speed++;
+            if(this.speed > 3)
+                this.speed = 3;
+        }
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public void setSlowBall(boolean slowBall) {
+        this.slowBall = slowBall;
     }
 
     public int getVidas() {
@@ -274,12 +311,14 @@ public class Bola implements Runnable {
         try{
             while(true){
                 move();
-                for(int i = 0; i < lpc.size(); i++){
-                    lpc.get(i).move();
-                }
+                
+                for(int i = 0; i < pc.powers.size(); i++){
+                    pc.powers.get(i).move();
+                }                
+                 
                 Thread.sleep(speed);  //mínimo de 3;
             }                
         }
-        catch(Exception e){System.out.println("System error: "+e);}
+        catch(Exception e){System.out.println("Erro na bola: "+e);}
     }
 }

@@ -17,7 +17,8 @@ public class Raquete implements Runnable {
     boolean paused = false;
     private int centerSize = 3;
     
-    private LinkedList<Power> pc = PowerControlador.getPowerBounds();
+    PowerControlador pc = new PowerControlador();
+    private LinkedList<Power> powers = PowerControlador.getPowers();
     
     Rectangle r;
     
@@ -120,10 +121,10 @@ public class Raquete implements Runnable {
     }
     
     public void collisionPowers(){        
-        for(int i = 0; i < pc.size(); i++){
-            if(getBounds().intersects(pc.get(i).getBounds())){
-                int k = pc.get(i).getTipo();                
-                pc.remove(i);
+        for(int i = 0; i < pc.powers.size(); i++){
+            if(getBounds().intersects(pc.powers.get(i).getBounds())){
+                int k = pc.powers.get(i).getTipo();                
+                pc.powers.remove(i);
                 this.bonusPower(k);
             }
         }

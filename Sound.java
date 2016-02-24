@@ -14,6 +14,9 @@ public class Sound {
     public static final AudioClip pup2 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup02.wav"));
     public static final AudioClip pup3 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup03.wav"));
     public static final AudioClip pup4 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup04.wav"));
+    public static final AudioClip pup5 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup05.wav"));
+    public static final AudioClip pup6 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup06.wav"));
+    public static final AudioClip pup7 = Applet.newAudioClip(Sound.class.getResource("../audio/powerup07.wav"));
 }
 /*
     private static Sound staticSound = new Sound();
